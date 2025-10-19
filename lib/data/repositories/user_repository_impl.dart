@@ -9,7 +9,7 @@ class UserRepositoryImpl implements UserRepository {
       : _dataSource = dataSource ?? RemoteDataSource();
 
   @override
-  Future<List<UserModel>> getUsers() async {
+  Future<List<UserModel>> getUsers({String? country}) async {
     try {
       final jsonList = await _dataSource.fetchUsers();
       return jsonList.map((json) => UserModel.fromJson(json)).toList();
