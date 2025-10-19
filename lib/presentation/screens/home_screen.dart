@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/user_model.dart';
+import 'package:random_user_app/presentation/screens/profile_detail_screen.dart';
 import '../providers/user_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -27,8 +27,10 @@ class HomeScreen extends ConsumerWidget {
               style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
               items: [
                 const DropdownMenuItem(value: null, child: Text('All')),
-                const DropdownMenuItem(value: 'us', child: Text('United States')),
-                const DropdownMenuItem(value: 'gb', child: Text('United Kingdom')),
+                const DropdownMenuItem(
+                    value: 'us', child: Text('United States')),
+                const DropdownMenuItem(
+                    value: 'gb', child: Text('United Kingdom')),
                 const DropdownMenuItem(value: 'fr', child: Text('France')),
                 const DropdownMenuItem(value: 'au', child: Text('Australia')),
               ],
@@ -41,7 +43,8 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(usersProvider.notifier).fetchUsers(isRefresh: true),
+        onRefresh: () =>
+            ref.read(usersProvider.notifier).fetchUsers(isRefresh: true),
         child: usersState.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => Center(
@@ -51,7 +54,9 @@ class HomeScreen extends ConsumerWidget {
                 Text('Error: $error', style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => ref.read(usersProvider.notifier).fetchUsers(isRefresh: true),
+                  onPressed: () => ref
+                      .read(usersProvider.notifier)
+                      .fetchUsers(isRefresh: true),
                   child: const Text('Retry'),
                 ),
               ],
@@ -60,7 +65,8 @@ class HomeScreen extends ConsumerWidget {
           data: (users) => GridView.builder(
             padding: const EdgeInsets.all(8),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2, // Responsive
+              crossAxisCount:
+                  MediaQuery.of(context).size.width > 600 ? 4 : 2, // Responsive
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
               childAspectRatio: 0.75,
@@ -69,7 +75,8 @@ class HomeScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final user = users[index];
               return Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
                 elevation: 4,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,10 +84,17 @@ class HomeScreen extends ConsumerWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          // Placeholder for navigation to detail screen (Phase 5)
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileDetailScreen(
+                                  pictureUrl: user.pictureUrl),
+                            ),
+                          );
                         },
                         child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16)),
                           child: Image.network(
                             user.pictureUrl,
                             fit: BoxFit.cover,
@@ -96,7 +110,8 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           Text(
                             '${user.firstName}, ${user.age}',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 4),
@@ -111,12 +126,21 @@ class HomeScreen extends ConsumerWidget {
                             children: [
                               IconButton(
                                 icon: Icon(
-                                  user.isLiked ? Icons.favorite : Icons.favorite_border,
+                                  user.isLiked
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
                                   color: user.isLiked ? Colors.red : null,
-                                ).animate(
-                                  onPlay: (controller) => controller.repeat(),
-                                ).scale(duration: 300.ms, curve: Curves.easeInOut),
-                                onPressed: () => ref.read(usersProvider.notifier).toggleLike(user.pictureUrl),
+                                )
+                                    .animate(
+                                      onPlay: (controller) =>
+                                          controller.repeat(),
+                                    )
+                                    .scale(
+                                        duration: 300.ms,
+                                        curve: Curves.easeInOut),
+                                onPressed: () => ref
+                                    .read(usersProvider.notifier)
+                                    .toggleLike(user.pictureUrl),
                               ),
                             ],
                           ),
