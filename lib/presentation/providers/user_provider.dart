@@ -21,7 +21,7 @@ class UsersNotifier extends StateNotifier<AsyncValue<List<UserModel>>> {
     if (isRefresh) state = const AsyncValue.loading();
     try {
       final country = _ref.read(countryFilterProvider);
-      final users = await _repository.getUsers();
+      final users = await _repository.getUsers(country: country);
       state = AsyncValue.data(users);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
