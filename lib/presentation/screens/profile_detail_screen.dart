@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,8 @@ class ProfileDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final usersState = ref.watch(usersProvider);
-    final user = usersState.value?.firstWhere((u) => u.pictureUrl == pictureUrl);
+    final user =
+        usersState.value?.firstWhere((u) => u.pictureUrl == pictureUrl);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,10 +28,13 @@ class ProfileDetailScreen extends ConsumerWidget {
               icon: Icon(
                 user.isLiked ? Icons.favorite : Icons.favorite_border,
                 color: user.isLiked ? Colors.red : null,
-              ).animate(
-                onPlay: (controller) => controller.repeat(),
-              ).scale(duration: 300.ms, curve: Curves.easeInOut),
-              onPressed: () => ref.read(usersProvider.notifier).toggleLike(pictureUrl),
+              )
+                  .animate(
+                    onPlay: (controller) => controller.repeat(),
+                  )
+                  .scale(duration: 300.ms, curve: Curves.easeInOut),
+              onPressed: () =>
+                  ref.read(usersProvider.notifier).toggleLike(pictureUrl),
             ),
         ],
       ),
@@ -41,12 +46,21 @@ class ProfileDetailScreen extends ConsumerWidget {
                   Hero(
                     tag: user.pictureUrl,
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
-                      child: Image.network(
-                        user.pictureUrl,
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(16)),
+                      child: CachedNetworkImage(
+                        imageUrl: user.pictureUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 300,
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[300],
+                          height: 300,
+                          child:
+                              const Center(child: Text('Image Failed to Load')),
+                        ),
                       ),
                     ),
                   ),
@@ -57,12 +71,14 @@ class ProfileDetailScreen extends ConsumerWidget {
                       children: [
                         Text(
                           '${user.firstName}, ${user.age}',
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Location',
-                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.grey[600]),
                         ),
                         Text(
                           user.city,

@@ -11,7 +11,8 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<List<UserModel>> getUsers({String? country}) async {
     try {
-      final jsonList = await _dataSource.fetchUsers();
+      final jsonList = await _dataSource.fetchUsers(country: country);
+      print('Raw JSON list: $jsonList'); // Debug print
       return jsonList.map((json) => UserModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Repository error: $e');

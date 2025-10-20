@@ -4,14 +4,16 @@ import '../../domain/models/user_model.dart';
 import '../../domain/repositories/user_repository.dart';
 
 // Provide the UserRepository
-final userRepositoryProvider = Provider<UserRepository>((ref) => UserRepositoryImpl());
+final userRepositoryProvider =
+    Provider<UserRepository>((ref) => UserRepositoryImpl());
 
 // Provider for country filter (bonus feature)
 final countryFilterProvider = StateProvider<String?>((ref) => null);
 
 // Notifier to manage the list of users and their state
 class UsersNotifier extends StateNotifier<AsyncValue<List<UserModel>>> {
-  UsersNotifier(this._repository, this._ref) : super(const AsyncValue.loading()) {
+  UsersNotifier(this._repository, this._ref)
+      : super(const AsyncValue.loading()) {
     fetchUsers();
   }
   final UserRepository _repository;
@@ -22,6 +24,7 @@ class UsersNotifier extends StateNotifier<AsyncValue<List<UserModel>>> {
     try {
       final country = _ref.read(countryFilterProvider);
       final users = await _repository.getUsers(country: country);
+      print('Fetched users: $users'); // Debug print
       state = AsyncValue.data(users);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -47,7 +50,8 @@ class UsersNotifier extends StateNotifier<AsyncValue<List<UserModel>>> {
 }
 
 // Provide the UsersNotifier
-final usersProvider = StateNotifierProvider<UsersNotifier, AsyncValue<List<UserModel>>>((ref) {
+final usersProvider =
+    StateNotifierProvider<UsersNotifier, AsyncValue<List<UserModel>>>((ref) {
   final repository = ref.watch(userRepositoryProvider);
   return UsersNotifier(repository, ref);
 });

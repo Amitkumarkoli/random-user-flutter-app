@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -95,10 +96,17 @@ class HomeScreen extends ConsumerWidget {
                         child: ClipRRect(
                           borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(16)),
-                          child: Image.network(
-                            user.pictureUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: user.pictureUrl,
                             fit: BoxFit.cover,
                             width: double.infinity,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                  child: Text('Image Failed to Load')),
+                            ),
                           ),
                         ),
                       ),
